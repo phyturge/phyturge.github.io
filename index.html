@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>phyturge — arboretum</title>
   <meta name="description" content="hendecad by Phyturge Arboretum / phyIL over Python — closed beta-testing" />
   <style>
     :root{
-      --bg0:#070a0d;
+      --bg0:#07090c;
       --bg1:#05070a;
-      --fg:#e9e3d6;      /* bone */
-      --muted:#a69f92;   /* dust */
-      --dim:#756f66;
-      --line:#1d232a;
-      --cad1:#cfd0c9;
-      --cad2:#b8d7be;
-      --cad3:#7bd3a7;    /* muted green, not neon */
+      --fg:#eee7db;        /* warm bone */
+      --muted:#b8b0a3;     /* dust */
+      --dim:#8b857b;
+      --cad0:#d7d2c7;
+      --cad1:#bfe3c9;
+      --cad2:#7bd3a7;      /* muted green */
       --focus:#9ad9b9;
     }
 
@@ -24,193 +23,131 @@
       margin:0;
       color: var(--fg);
       background:
-        radial-gradient(900px 600px at 18% 22%, rgba(120,140,160,.10), transparent 65%),
-        radial-gradient(700px 500px at 72% 70%, rgba(40,120,90,.08), transparent 60%),
+        radial-gradient(900px 650px at 22% 18%, rgba(120,140,160,.10), transparent 68%),
+        radial-gradient(760px 560px at 72% 78%, rgba(60,140,110,.08), transparent 62%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       letter-spacing: 0.01em;
       overflow-x: hidden;
     }
 
-    /* Subtle grain (no external asset) */
+    /* subtle grain */
     body::before{
       content:"";
       position: fixed;
       inset:0;
       pointer-events:none;
-      opacity: .08;
+      opacity: .07;
       background-image:
-        repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0, rgba(255,255,255,.025) 1px, transparent 1px, transparent 3px),
-        repeating-linear-gradient(90deg, rgba(0,0,0,.03) 0, rgba(0,0,0,.03) 1px, transparent 1px, transparent 4px);
+        repeating-linear-gradient(0deg, rgba(255,255,255,.028) 0, rgba(255,255,255,.028) 1px, transparent 1px, transparent 4px),
+        repeating-linear-gradient(90deg, rgba(0,0,0,.03) 0, rgba(0,0,0,.03) 1px, transparent 1px, transparent 5px);
       mix-blend-mode: overlay;
     }
 
+    /* layout: stable center reference */
     .wrap{
       min-height: 100%;
       display:flex;
       align-items:center;
-      justify-content:flex-start;
+      justify-content:center;
+      padding: clamp(22px, 5vh, 60px) 16px;
     }
 
     .console{
-      width: min(980px, 92vw);
-      margin-left: clamp(14px, 8vw, 84px);
-      padding: clamp(28px, 5.5vh, 58px) 0;
-      position: relative;
+      width: min(900px, 100%);
+      /* a gentle “console-left” bias on wide screens */
+      transform: translateX(clamp(0px, -3.6vw, -42px));
     }
 
-    .screen{
-      padding: 22px 18px 24px 18px;
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 18px;
-      background: rgba(10,14,18,.52);
-      box-shadow:
-        0 0 0 1px rgba(0,0,0,.45) inset,
-        0 24px 70px rgba(0,0,0,.55);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .screen::after{
-      content:"";
-      position:absolute; inset:-2px;
-      pointer-events:none;
-      background: radial-gradient(900px 300px at 25% 0%, rgba(255,255,255,.06), transparent 55%);
-      opacity: .55;
-    }
-
-    .lines{ position: relative; z-index: 2; }
+    /* Typography: bigger + responsive */
     .line{
       white-space: pre-wrap;
-      line-height: 1.55;
-      font-size: 18px;
+      line-height: 1.62;
+      font-size: clamp(18px, 1.85vw, 22px);
     }
 
-    .line.dim { color: var(--muted); font-size: 15px; }
-    .line.tiny { color: rgba(233,227,214,.68); font-size: 12px; line-height: 1.45; margin-top: 18px; }
-    .line.tiny .cite { opacity: .75; }
+    .line.dim{
+      color: rgba(238,231,219,.82);
+      font-size: clamp(16px, 1.55vw, 18px);
+    }
 
-    /* caret */
+    .line.quote{
+      margin-top: clamp(18px, 3vh, 26px);
+      color: rgba(238,231,219,.78);
+      font-size: clamp(15px, 1.45vw, 17px); /* bigger than before */
+      line-height: 1.55;
+    }
+
+    .sig{
+      margin-top: 10px;
+      color: rgba(238,231,219,.60);
+      font-size: clamp(14px, 1.25vw, 15px);
+    }
+
     .caret{
       display:inline-block;
-      width: 10px;
+      width: 12px;
       transform: translateY(1px);
-      color: rgba(233,227,214,.9);
-      animation: blink 1.08s steps(2, end) infinite;
+      opacity: .92;
+      animation: blink 1.05s steps(2,end) infinite;
     }
     @keyframes blink { 50%{ opacity: 0; } }
 
-    /* hendecad title composition */
-    .title{
+    /* hendecad styling */
+    .hendecad{
       display:inline-flex;
-      gap: 0;
-      align-items: baseline;
-      font-size: 30px;
-      line-height: 1.2;
+      gap:0;
+      align-items:baseline;
+      font-size: clamp(24px, 2.4vw, 32px);
+      line-height: 1.25;
       letter-spacing: .02em;
     }
-    .title .u{ opacity:.9; }
-    .title .hen, .title .de{ color: var(--fg); }
-    .title .cad{
-      color: var(--cad1);
-      transition: color .6s ease;
-      text-shadow: 0 0 10px rgba(123, 211, 167, 0);
+    .hendecad .u{ opacity:.92; }
+    .hendecad .cad{
+      color: var(--cad0);
+      transition: color .55s ease, text-shadow .55s ease;
+      text-shadow: 0 0 16px rgba(123,211,167, 0);
     }
-    .title.cad-stage-1 .cad{ color: var(--cad1); }
-    .title.cad-stage-2 .cad{ color: var(--cad2); text-shadow: 0 0 14px rgba(123, 211, 167, .12); }
-    .title.cad-stage-3 .cad{ color: var(--cad3); text-shadow: 0 0 18px rgba(123, 211, 167, .16); }
+    .hendecad.cad1 .cad{ color: var(--cad0); }
+    .hendecad.cad2 .cad{ color: var(--cad1); text-shadow: 0 0 18px rgba(123,211,167,.10); }
+    .hendecad.cad3 .cad{ color: var(--cad2); text-shadow: 0 0 22px rgba(123,211,167,.14); }
 
-    /* secondary lines fade-in */
-    .fade-in{
-      opacity: 0;
-      transform: translateY(4px);
-      transition: opacity .55s ease, transform .55s ease;
-    }
-    .fade-in.show{
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* links */
+    /* links: terminal style */
     a{
       color: var(--fg);
       text-decoration: none;
-      border-bottom: 1px dotted rgba(233,227,214,.35);
+      border-bottom: 1px dotted rgba(238,231,219,.35);
     }
-    a:hover{ border-bottom-color: rgba(154,217,185,.85); color: rgba(233,227,214,.98); }
+    a:hover{
+      border-bottom-color: rgba(154,217,185,.85);
+      color: rgba(238,231,219,.98);
+    }
     a:focus-visible{
       outline: 2px solid var(--focus);
       outline-offset: 3px;
       border-radius: 6px;
     }
 
-    /* seedling canvas */
+    /* seedling: anchored, consistent on all screens */
     .seedling{
-      position: absolute;
-      left: 18px;
-      bottom: 16px;
-      width: 84px;
-      height: 84px;
+      margin-top: 10px;
+      width: 88px;
+      height: 88px;
       opacity: 0;
-      transform: translateY(4px);
-      transition: opacity .6s ease, transform .6s ease;
-      z-index: 3;
-      pointer-events:none;
-      filter: drop-shadow(0 0 10px rgba(123,211,167,.10));
+      transform: translateY(2px);
+      transition: opacity .45s ease, transform .45s ease;
+      filter: drop-shadow(0 0 12px rgba(123,211,167,.12));
     }
-    .seedling.show{
-      opacity: .92;
-      transform: translateY(0);
+    .seedling.show{ opacity: .92; transform: translateY(0); }
+
+    /* small screens: remove left bias, keep centered */
+    @media (max-width: 520px){
+      .console{ transform: none; }
     }
 
-    /* quote area */
-    .quote{
-      margin-top: 18px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,.06);
-    }
-    blockquote{
-      margin: 10px 0 6px;
-      padding: 0;
-      color: rgba(233,227,214,.68);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-    .sig{
-      color: rgba(233,227,214,.55);
-      font-size: 11px;
-    }
-    .source{
-      margin-top: 8px;
-      color: rgba(233,227,214,.45);
-      font-size: 11px;
-    }
-    .steph{
-      border-bottom: 1px dotted rgba(233,227,214,.28);
-      position: relative;
-    }
-    .steph:hover{ border-bottom-color: rgba(154,217,185,.75); }
-
-    .steph[data-tip]:hover::after{
-      content: attr(data-tip);
-      position: absolute;
-      left: 0;
-      top: -34px;
-      white-space: nowrap;
-      font-size: 11px;
-      color: rgba(233,227,214,.82);
-      background: rgba(10,14,18,.92);
-      border: 1px solid rgba(255,255,255,.08);
-      padding: 6px 8px;
-      border-radius: 10px;
-      box-shadow: 0 16px 46px rgba(0,0,0,.55);
-      opacity: .98;
-    }
-
-    /* reduced motion: kill all animations/transitions */
+    /* reduced motion: no typing/animation */
     @media (prefers-reduced-motion: reduce){
       * { animation: none !important; transition: none !important; }
-      .fade-in{ opacity: 1 !important; transform: none !important; }
       .seedling{ opacity: .92 !important; transform: none !important; }
     }
   </style>
@@ -218,42 +155,8 @@
 <body>
   <div class="wrap">
     <main class="console" aria-label="Phyturge Arboretum landing">
-      <section class="screen" role="region" aria-label="Terminal">
-        <canvas class="seedling" id="seedling" width="84" height="84" aria-hidden="true"></canvas>
-
-        <div class="lines">
-          <!-- Line 1: typed -->
-          <div class="line" id="line1" aria-live="polite"></div>
-
-          <!-- Remaining lines appear after -->
-          <div class="line fade-in dim" id="line2">
-            Phyturge Arboretum / phyIL over Python
-          </div>
-          <div class="line fade-in dim" id="line3">to be announced</div>
-
-          <div class="line fade-in dim" id="line4">
-            closed beta-testing / <a href="mailto:arsadamant@gmail.com?subject=hendecad%20closed%20beta%20%E2%80%94%20request%20seed&body=Hi%2C%0A%0AI%27d%20like%20to%20request%20a%20seed%20for%20hendecad%20closed%20beta.%0A%0AName%3A%0AUse%20case%3A%0ATech%20stack%3A%0AWhat%20I%20can%20test%3A%0A%0AThanks%2C">[request seed]</a>
-          </div>
-
-          <div class="line fade-in tiny quote" id="quoteWrap">
-            <blockquote>
-              "One who is φυτουργός of all the works of all other workmen, of vessels of every kind, plants and animals, himself and all other things..."
-            </blockquote>
-            <div class="sig">Plato, Rep. 596c7–e3</div>
-            <div class="source">
-              Source: Plato, Republic (Jowett), Project Gutenberg —
-              <a class="steph" href="https://www.gutenberg.org/files/1497/1497-h/1497-h.htm"
-                 target="_blank" rel="noreferrer"
-                 data-tip="Project Gutenberg — click to open (Stephanus 596c7–e3)">596c7–e3</a>.
-            </div>
-          </div>
-
-          <!-- Idle cursor (stays after sequence) -->
-          <div class="line" aria-hidden="true">
-            <span class="caret">▍</span>
-          </div>
-        </div>
-      </section>
+      <div id="out" aria-live="polite"></div>
+      <canvas class="seedling" id="seedling" width="88" height="88" aria-hidden="true"></canvas>
     </main>
   </div>
 
@@ -261,192 +164,295 @@
     (function () {
       const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      const els = {
-        line1: document.getElementById('line1'),
-        line2: document.getElementById('line2'),
-        line3: document.getElementById('line3'),
-        line4: document.getElementById('line4'),
-        quote: document.getElementById('quoteWrap'),
-        seed: document.getElementById('seedling')
-      };
+      const out = document.getElementById('out');
+      const seed = document.getElementById('seedling');
+      const ctx = seed.getContext('2d');
 
-      // Line 1 content with CAD accent stages
-      const titleHTML = () => `
-        <span class="title cad-stage-1" id="title">
-          <span class="u">_</span><span class="hen">hen</span><span class="de">de</span><span class="cad">cad</span>
-          <span class="u"> — </span><span class="u">computer‑aided design, reimagined</span>
-        </span>
-      `;
-
-      // Simple pixel frames for sprout -> plant -> small tree (84x84 canvas)
-      const ctx = els.seed.getContext('2d');
-      const scale = 4; // pixel size
-      const gridW = 21; // 21 * 4 = 84
-      const gridH = 21;
-
+      // --- Seedling (pixel canvas) ---
+      const px = 4;                 // pixel size
+      const W = 22, H = 22;         // 22*4=88
       const C = {
-        // very restrained palette
-        empty: null,
-        soil: 'rgba(233,227,214,.18)',
+        soil: 'rgba(238,231,219,.18)',
         stem: 'rgba(154,217,185,.62)',
         leaf: 'rgba(123,211,167,.70)',
-        leaf2:'rgba(184,215,190,.56)',
-        bark: 'rgba(233,227,214,.20)'
+        leaf2:'rgba(191,227,201,.56)'
       };
 
-      function clear() {
-        ctx.clearRect(0, 0, 84, 84);
-      }
-
-      function px(x, y, color) {
-        if (!color) return;
+      function clear() { ctx.clearRect(0,0,88,88); }
+      function dot(x,y,color){
+        if(!color) return;
         ctx.fillStyle = color;
-        ctx.fillRect(x * scale, y * scale, scale, scale);
+        ctx.fillRect(x*px, y*px, px, px);
       }
 
-      // Three frames. Minimal, cozy, almost “found in a terminal”.
       const frames = [
-        // frame 0: seed + tiny sprout
-        (t) => {
+        (mode) => { // sprout
           clear();
-          // soil line
-          for (let x = 3; x <= 17; x++) px(x, 16, C.soil);
-          // seed
-          px(10, 15, C.bark); px(11, 15, C.bark);
-          // sprout
-          px(10, 14, C.stem);
-          px(10, 13, C.stem);
-          // tiny leaf
-          px(9, 13, C.leaf2);
-          px(11, 13, C.leaf2);
-
-          // micro “breath”
-          if (t === 'twitch') px(11, 12, C.leaf2);
+          for(let x=3;x<=18;x++) dot(x,16,C.soil);
+          dot(11,15,C.stem); dot(11,14,C.stem);
+          dot(10,14,C.leaf2); dot(12,14,C.leaf2);
+          if(mode==='t') dot(12,13,C.leaf2);
         },
-        // frame 1: small plant
-        (t) => {
+        (mode) => { // plant
           clear();
-          for (let x = 3; x <= 17; x++) px(x, 16, C.soil);
-          // stem
-          px(10, 15, C.stem); px(10, 14, C.stem); px(10, 13, C.stem); px(10, 12, C.stem);
-          // leaves
-          px(9, 12, C.leaf); px(11, 12, C.leaf);
-          px(8, 11, C.leaf2); px(12, 11, C.leaf2);
-
-          if (t === 'twitch') px(12, 10, C.leaf2);
+          for(let x=3;x<=18;x++) dot(x,16,C.soil);
+          dot(11,15,C.stem); dot(11,14,C.stem); dot(11,13,C.stem); dot(11,12,C.stem);
+          dot(10,12,C.leaf); dot(12,12,C.leaf);
+          dot(9,11,C.leaf2); dot(13,11,C.leaf2);
+          if(mode==='t') dot(13,10,C.leaf2);
         },
-        // frame 2: mini tree
-        (t) => {
+        (mode) => { // mini tree
           clear();
-          for (let x = 3; x <= 17; x++) px(x, 16, C.soil);
-          // trunk
-          px(10, 15, C.stem); px(10, 14, C.stem); px(10, 13, C.stem); px(10, 12, C.stem); px(10, 11, C.stem);
-          // canopy (very small)
-          px(9, 11, C.leaf2); px(11, 11, C.leaf2);
-          px(8, 10, C.leaf); px(9, 10, C.leaf); px(10, 10, C.leaf); px(11, 10, C.leaf); px(12, 10, C.leaf);
-          px(9, 9, C.leaf2); px(10, 9, C.leaf2); px(11, 9, C.leaf2);
-
-          // tiny drift
-          if (t === 'twitch') { px(12, 9, C.leaf2); px(8, 9, C.leaf2); }
+          for(let x=3;x<=18;x++) dot(x,16,C.soil);
+          dot(11,15,C.stem); dot(11,14,C.stem); dot(11,13,C.stem); dot(11,12,C.stem); dot(11,11,C.stem);
+          // canopy
+          [9,10,11,12,13].forEach(x => dot(x,10,C.leaf));
+          dot(10,9,C.leaf2); dot(11,9,C.leaf2); dot(12,9,C.leaf2);
+          dot(10,11,C.leaf2); dot(12,11,C.leaf2);
+          if(mode==='t'){ dot(9,9,C.leaf2); dot(13,9,C.leaf2); }
         }
       ];
 
-      function showRest() {
-        // gentle appearance, no extra theatrics
-        els.line2.classList.add('show');
-        setTimeout(() => els.line3.classList.add('show'), 220);
-        setTimeout(() => els.line4.classList.add('show'), 520);
-        setTimeout(() => els.quote.classList.add('show'), 920);
-      }
-
       function showSeedling() {
-        els.seed.classList.add('show');
+        seed.classList.add('show');
       }
 
-      function animateSeedling() {
+      function growSeedling() {
         if (reduceMotion) {
-          frames[2]('still');
-          els.seed.classList.add('show');
+          frames[2]('s');
+          showSeedling();
           return;
         }
-
-        // Growth: 0 -> 1 -> 2
-        frames[0]('still');
+        frames[0]('s');
         showSeedling();
+        setTimeout(() => frames[1]('s'), 520);
+        setTimeout(() => frames[2]('s'), 1080);
 
-        setTimeout(() => frames[1]('still'), 520);
-        setTimeout(() => frames[2]('still'), 1080);
-
-        // Minimal twitch every few seconds: a single extra pixel shift
-        let twitch = false;
+        let flip = false;
         setInterval(() => {
-          twitch = !twitch;
-          const mode = twitch ? 'twitch' : 'still';
-          frames[2](mode);
+          flip = !flip;
+          frames[2](flip ? 't' : 's');
         }, 4200);
       }
 
-      function typeLine1() {
-        // We type only the title block by progressively revealing text nodes (simple & robust).
-        // Implementation: reveal plain string gradually, then replace with styled title and run CAD tint stages.
+      // --- Terminal typing ---
+      const caret = document.createElement('span');
+      caret.className = 'caret';
+      caret.textContent = '▍';
 
-        const full = "_hendecad — computer‑aided design, reimagined";
-        if (reduceMotion) {
-          els.line1.innerHTML = titleHTML();
-          const t = document.getElementById('title');
-          t.classList.remove('cad-stage-1');
-          t.classList.add('cad-stage-3');
-          showSeedling();
-          animateSeedling();
-          showRest();
+      // Build line elements up-front so layout is stable.
+      function mkLine(className){
+        const d = document.createElement('div');
+        d.className = 'line' + (className ? ' ' + className : '');
+        out.appendChild(d);
+        return d;
+      }
+
+      // Line 1 has special markup for CAD tint.
+      const l1 = mkLine('');
+      const hend = document.createElement('span');
+      hend.className = 'hendecad cad1';
+      hend.innerHTML = '<span class="u">_</span>hen<span>de</span><span class="cad">cad</span><span class="u"> — computer‑aided design, reimagined</span>';
+      l1.appendChild(hend);
+
+      const l2 = mkLine('dim');
+      const l3 = mkLine('dim');
+      const l4 = mkLine('quote');
+      const l5 = mkLine('sig');
+      const l6 = mkLine(''); // final empty line for idle cursor
+
+      const lines = [
+        { el: l1, text: null, type: 'markup-hendecad' },
+        { el: l2, text: 'Phyturge Arboretum / phyIL over Python' },
+        { el: l3, text: 'closed beta-testing / [request seed]', link: 'mailto:arsadamant@gmail.com?subject=hendecad%20closed%20beta%20%E2%80%94%20request%20seed&body=Hi%2C%0A%0AI%27d%20like%20to%20request%20a%20seed%20for%20hendecad%20closed%20beta.%0A%0AName%3A%0AUse%20case%3A%0ATech%20stack%3A%0AWhat%20I%20can%20test%3A%0A%0AThanks%2C' },
+        { el: l4, text:
+`"One who is φυτουργός
+of all the works
+of all other workmen,
+of vessels of every kind,
+plants and animals,
+himself and all other things..."` },
+        { el: l5, text: 'Plato, Rep. 596c7–e3', stephLink: 'https://www.gutenberg.org/files/1497/1497-h/1497-h.htm' }
+      ];
+
+      // For reduced motion: show instantly (no typing, but keep layout).
+      if (reduceMotion) {
+        // line1: tint cad + show seedling
+        hend.classList.remove('cad1');
+        hend.classList.add('cad3');
+        growSeedling();
+
+        l2.textContent = lines[1].text;
+        // line3 with link
+        l3.innerHTML = 'closed beta-testing / <a href="' + lines[2].link + '">[request seed]</a>';
+
+        l4.textContent = lines[3].text;
+
+        // signature with clickable stephanus
+        l5.innerHTML = 'Plato, Rep. <a href="' + lines[4].stephLink + '" target="_blank" rel="noreferrer">596c7–e3</a>';
+
+        l6.appendChild(caret);
+        return;
+      }
+
+      // Hide prebuilt content and type into fresh nodes.
+      // (We keep elements for stable spacing; we re-fill them.)
+      function clearEl(el) { el.textContent = ''; el.innerHTML = ''; }
+
+      // Prepare: empty everything, then type sequentially.
+      clearEl(l1); clearEl(l2); clearEl(l3); clearEl(l4); clearEl(l5); clearEl(l6);
+
+      let currentLine = 0;
+
+      function moveCaretTo(el){
+        el.appendChild(caret);
+      }
+
+      function tintCadStage(stage){
+        hend.classList.remove('cad1','cad2','cad3');
+        hend.classList.add(stage);
+      }
+
+      function typeText(el, text, opts){
+        const speed = opts.speed || 22;
+        const jitter = opts.jitter || 10;
+        let i = 0;
+
+        const write = () => {
+          if (i < text.length) {
+            el.insertBefore(document.createTextNode(text.charAt(i)), caret);
+            i++;
+
+            // Hook: when typing "cad" in line1, show seedling + tint cadence
+            if (opts.onChar) opts.onChar(i, text);
+
+            setTimeout(write, speed + Math.floor(Math.random()*jitter));
+          } else {
+            setTimeout(opts.onDone, opts.hold || 360);
+          }
+        };
+
+        moveCaretTo(el);
+        setTimeout(write, 90);
+      }
+
+      function typeLine(idx){
+        const item = lines[idx];
+
+        // Enter spacing: emulate terminal blank lines by adding margin.
+        // We do it by inserting empty lines only when needed.
+        // (Here: we just let the quote have natural margin-top, and signature follow.)
+        if (item.type === 'markup-hendecad') {
+          // Type plain string first, then swap to styled + tint + seedling.
+          const plain = "_hendecad — computer‑aided design, reimagined";
+          typeText(l1, plain, {
+            speed: 24,
+            jitter: 14,
+            hold: 420,
+            onChar: (pos, full) => {
+              // When we reach the end of "_hendecad" (approx), begin tint staging.
+              // We switch to styled version at the end, so this is only pacing.
+            },
+            onDone: () => {
+              // Swap to styled markup and run tint + seedling timing.
+              clearEl(l1);
+              l1.appendChild(hend);
+              moveCaretTo(l1);
+
+              setTimeout(() => tintCadStage('cad2'), 140);
+              setTimeout(() => tintCadStage('cad3'), 420);
+
+              setTimeout(() => { growSeedling(); }, 460);
+              setTimeout(() => { currentLine++; typeLine(currentLine); }, 760);
+            }
+          });
           return;
         }
 
-        let i = 0;
-        const baseSpan = document.createElement('span');
-        baseSpan.textContent = "";
-        els.line1.appendChild(baseSpan);
+        if (idx === 2) {
+          // line with link: type prefix + then type [request seed] as link
+          const prefix = "closed beta-testing / ";
+          typeText(l3, prefix, {
+            speed: 20,
+            jitter: 10,
+            hold: 150,
+            onDone: () => {
+              // Now type the link label in an <a>, still with caret at the end
+              const a = document.createElement('a');
+              a.href = lines[2].link;
+              a.textContent = '';
+              l3.appendChild(a);
+              moveCaretTo(a);
 
-        const tick = () => {
-          i++;
-          baseSpan.textContent = full.slice(0, i);
+              const label = "[request seed]";
+              let j = 0;
+              const writeLink = () => {
+                if (j < label.length) {
+                  a.insertBefore(document.createTextNode(label.charAt(j)), caret);
+                  j++;
+                  setTimeout(writeLink, 20 + Math.floor(Math.random()*10));
+                } else {
+                  setTimeout(() => { currentLine++; typeLine(currentLine); }, 420);
+                }
+              };
+              setTimeout(writeLink, 80);
+            }
+          });
+          return;
+        }
 
-          // When we finish typing, swap to styled version (so CAD can tint)
-          if (i >= full.length) {
-            els.line1.innerHTML = titleHTML();
+        if (idx === 4) {
+          // Signature with clickable stephanus number
+          const prefix = "Plato, Rep. ";
+          typeText(l5, prefix, {
+            speed: 20,
+            jitter: 10,
+            hold: 90,
+            onDone: () => {
+              const a = document.createElement('a');
+              a.href = lines[4].stephLink;
+              a.target = "_blank";
+              a.rel = "noreferrer";
+              a.textContent = "";
+              l5.appendChild(a);
+              moveCaretTo(a);
 
-            const t = document.getElementById('title');
+              const label = "596c7–e3";
+              let j = 0;
+              const w = () => {
+                if (j < label.length) {
+                  a.insertBefore(document.createTextNode(label.charAt(j)), caret);
+                  j++;
+                  setTimeout(w, 22 + Math.floor(Math.random()*9));
+                } else {
+                  // end -> idle on new empty line
+                  setTimeout(() => {
+                    currentLine++;
+                    l6.textContent = '';
+                    moveCaretTo(l6);
+                  }, 520);
+                }
+              };
+              setTimeout(w, 90);
+            }
+          });
+          return;
+        }
 
-            // CAD tint stages (subtle)
-            setTimeout(() => t.classList.add('cad-stage-2'), 220);
-            setTimeout(() => t.classList.add('cad-stage-3'), 520);
-
-            // When "cad" has landed, reveal seedling
-            setTimeout(() => {
-              showSeedling();
-              animateSeedling();
-            }, 540);
-
-            // Then the rest, softly
-            setTimeout(showRest, 1300);
-            return;
+        // default text lines (l2, quote)
+        typeText(item.el, item.text, {
+          speed: 20,
+          jitter: 12,
+          hold: (idx === 3) ? 520 : 380,
+          onDone: () => {
+            currentLine++;
+            if (currentLine < lines.length) typeLine(currentLine);
           }
-
-          // small irregularity: human terminal feel
-          const pause = (i % 7 === 0) ? 40 : 0;
-          setTimeout(tick, 28 + pause);
-        };
-
-        setTimeout(tick, 260);
+        });
       }
 
-      // Boot sequence
-      els.line2.classList.remove('show');
-      els.line3.classList.remove('show');
-      els.line4.classList.remove('show');
-      els.quote.classList.remove('show');
-
-      typeLine1();
+      // Start
+      typeLine(0);
     })();
   </script>
 </body>
