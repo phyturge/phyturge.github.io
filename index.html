@@ -18,8 +18,14 @@
       --focus:#9ad9b9;
     }
 
-    html, body { height: 100%; }
-    body{
+         html, body{
+        height: 100%;
+        background: var(--bg1);
+      }
+      body{
+        overflow-x: hidden;
+        overflow-y: auto;
+
       margin:0;
       color: var(--fg);
       background:
@@ -28,9 +34,14 @@
         linear-gradient(180deg, var(--bg0), var(--bg1));
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       letter-spacing: 0.01em;
-      overflow-x: hidden;
     }
 
+      /* prevent white overscroll bounce */
+      @supports (overscroll-behavior: none){
+        body{ overscroll-behavior: none; }
+      }
+
+    
     /* subtle grain */
     body::before{
       content:"";
@@ -45,13 +56,20 @@
     }
 
     /* layout: stable center reference */
-    .wrap{
-      min-height: 100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: clamp(22px, 5vh, 60px) 16px;
-    }
+             .wrap{
+        min-height: 100%;
+        display:flex;
+        align-items:flex-start;            /* mobile: terminal */
+        justify-content:center;
+        padding: clamp(26px, 6vh, 72px) 16px;
+      }
+      
+      @media (min-width: 900px){
+        .wrap{
+          align-items:center;              /* desktop: centered */
+        }
+      }
+
 
     .console{
       width: min(900px, 100%);
@@ -111,6 +129,10 @@
     .hendecad.cad1 .cad{ color: var(--cad0); }
     .hendecad.cad2 .cad{ color: var(--cad1); text-shadow: 0 0 18px rgba(123,211,167,.10); }
     .hendecad.cad3 .cad{ color: var(--cad2); text-shadow: 0 0 22px rgba(123,211,167,.14); }
+    /* reserve space so line1 doesn't jump when swapping to styled markup */
+    #line1{
+      min-height: calc(1.25 * clamp(24px, 2.4vw, 32px));
+    }
 
     /* links: terminal style */
     a{
@@ -128,17 +150,22 @@
       border-radius: 6px;
     }
 
-    /* seedling: anchored, consistent on all screens */
-    .seedling{
-      margin-top: 10px;
-      width: 88px;
-      height: 88px;
-      opacity: 0;
-      transform: translateY(2px);
-      transition: opacity .45s ease, transform .45s ease;
-      filter: drop-shadow(0 0 12px rgba(123,211,167,.12));
-    }
-    .seedling.show{ opacity: .92; transform: translateY(0); }
+      /* seedling: anchored overlay (not pushed by text) */
+      .seedling{
+        position: fixed;
+        right: clamp(14px, 4vw, 34px);
+        bottom: clamp(14px, 3.5vh, 28px);
+        width: 88px;
+        height: 88px;
+        opacity: 0;
+        transform: translateY(2px);
+        transition: opacity .45s ease, transform .45s ease;
+        filter: drop-shadow(0 0 12px rgba(123,211,167,.12));
+        pointer-events: none;
+        z-index: 3;
+      }
+      .seedling.show{ opacity: .92; transform: translateY(0); }
+
 
     /* small screens: remove left bias, keep centered */
     @media (max-width: 520px){
@@ -249,8 +276,10 @@
       }
 
       // Line 1 has special markup for CAD tint.
-      const l1 = mkLine('');
+           const l1 = mkLine('');
+      l1.id = 'line1';
       const hend = document.createElement('span');
+
       hend.className = 'hendecad cad1';
       hend.innerHTML = '<span class="u">_</span>hen<span>de</span><span class="cad">cad</span><span class="u"> — computer‑aided design, reimagined</span>';
       l1.appendChild(hend);
