@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>phyturge — constitution</title>
+  <meta name="description" content="HENDECAD 4.1 — The Constitution" />
+  <style>
+    :root{
+      --bg0:#07090c;
+      --bg1:#05070a;
+      --fg:#eee7db;
+      --muted:#b8b0a3;
+      --cad:#7bd3a7;
+      --focus:#9ad9b9;
+    }
+
+    *{ margin:0; padding:0; box-sizing:border-box; }
+
+    html, body{
+      min-height: 100%;
+      background: var(--bg1);
+    }
+
+    body{
+      color: var(--fg);
+      /* Fixed background: text scrolls over it */
+      background:
+        radial-gradient(900px 650px at 22% 18%, rgba(120,140,160,.09), transparent 68%),
+        radial-gradient(760px 560px at 72% 78%, rgba(60,140,110,.07), transparent 62%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      background-attachment: fixed;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      letter-spacing: 0.01em;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-bottom: 80px; /* space for footer */
+    }
+
+    body::before{
+      content:"";
+      position: fixed;
+      inset:0;
+      pointer-events:none;
+      opacity: .06;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(255,255,255,.028) 0, rgba(255,255,255,.028) 1px, transparent 1px, transparent 4px),
+        repeating-linear-gradient(90deg, rgba(0,0,0,.03) 0, rgba(0,0,0,.03) 1px, transparent 1px, transparent 5px);
+      mix-blend-mode: overlay;
+      z-index: 1;
+    }
+
+    .wrap{
+      display: flex;
+      justify-content: center;
+      padding: clamp(40px, 8vh, 100px) 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .doc{
+      max-width: 720px;
+      width: 100%;
+    }
+
+    /* Header block */
+    .header{
+      margin-bottom: clamp(32px, 5vh, 48px);
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(238,231,219,.08);
+    }
+
+    .title-row{
+      font-size: clamp(24px, 2.5vw, 30px);
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .title-row .cad{
+      color: var(--cad);
+      text-shadow: 0 0 20px rgba(123,211,167,.14);
+    }
+
+    .sub-row{
+      font-size: clamp(18px, 1.8vw, 22px);
+      color: rgba(238,231,219,.9);
+      margin-bottom: 4px;
+    }
+
+    .preamble-label{
+      font-size: clamp(16px, 1.6vw, 18px);
+      color: var(--cad);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      opacity: .85;
+      margin-top: 16px;
+    }
+
+    /* Paragraphs */
+    .para{
+      font-size: clamp(16px, 1.6vw, 18px);
+      line-height: 1.7;
+      color: rgba(238,231,219,.82);
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .para.visible{
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Footer / Signature */
+    .footer{
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(238,231,219,.08);
+      font-size: 14px;
+      color: rgba(238,231,219,.5);
+      font-style: italic;
+      opacity: 0; /* will fade in last */
+      animation: fadeIn 1s ease forwards;
+      animation-delay: 2s; /* safe delay */
+    }
+
+    @keyframes fadeIn{ to{ opacity: 1; } }
+
+    /* Back link */
+    .nav-back{
+      margin-top: 42px;
+      display: inline-block;
+      font-size: 15px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease forwards;
+      animation-delay: 2.2s;
+    }
+
+    a{
+      color: var(--fg);
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(238,231,219,.30);
+      transition: border-color .2s, color .2s;
+    }
+    a:hover{
+      border-bottom-color: rgba(154,217,185,.78);
+      color: rgba(238,231,219,.98);
+    }
+    a:focus-visible{
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .para, .footer, .nav-back{ opacity: 1 !important; transform: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <article class="doc">
+      
+      <header class="header">
+        <div class="title-row">
+          _hen<span>de</span><span class="cad">cad</span> 4.1
+        </div>
+        <div class="sub-row">The Constitution</div>
+        <div class="preamble-label">PREAMBLE</div>
+      </header>
+
+      <div id="content-body">
+        <!-- Paragraphs injected by JS for staggered fade-in, or static below -->
+        <p class="para">We, the creators and users of the HENDECAD system,</p>
+
+        <p class="para">Grateful for the tradition of thought and craftsmanship from which we emerge, and to those who built systems for people, rather than against them;</p>
+
+        <p class="para">Aware that tools shape those who use them, and that systems forged in the 2020s and 2030s will influence the way we think, create, and remember in the decades to follow;</p>
+
+        <p class="para">Convinced that digital sovereignty—understood as control over data, workflow, and the consequences of system decisions—is a condition of freedom in an increasingly computational world;</p>
+
+        <p class="para">Recognizing that beauty is a consequence of ethics, not decoration, and that a system is beautiful only when it is honest, transparent, and free from manipulation;</p>
+
+        <p class="para">Accepting that durability requires contracts, boundaries, and accountability, while simultaneously needing a safe space for experimentation;</p>
+
+        <p class="para">Believing that the most valuable possibilities arise through composition and emergence, rather than the uncontrolled multiplication of entities;</p>
+
+        <p class="para">Committed to transparency: that system decisions remain reproducible, the provenance of entities documented, and constraints clearly justified;</p>
+
+        <p class="para">Hereby establish the Constitution of the HENDECAD System as a foundation of order, a guarantee of freedom, and a condition of longevity—so that the system may endure, evolve, and serve the user well into future decades.</p>
+      </div>
+
+      <footer class="footer">
+        January 1, 2026<br>
+        Iteration 4.1
+      </footer>
+
+      <div class="nav-back">
+        <a href="index.html">[ return to main ]</a>
+      </div>
+
+    </article>
+  </div>
+
+  <script>
+    (function(){
+      // Staggered reveal of paragraphs
+      const paras = document.querySelectorAll('.para');
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if(reduceMotion) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting){
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      paras.forEach((p, i) => {
+        // Initial delay for first few to cascade nicely
+        setTimeout(() => {
+          observer.observe(p);
+          // Fallback trigger if already in view but observer is slow
+          p.classList.add('visible');
+        }, 150 + (i * 200)); 
+      });
+    })();
+  </script>
+</body>
+</html>
