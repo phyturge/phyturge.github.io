@@ -11,7 +11,6 @@
       --bg1:#05070a;
       --fg:#eee7db;
       --muted:#b8b0a3;
-      --dim:#8b857b;
       --cad:#7bd3a7;
       --focus:#9ad9b9;
     }
@@ -35,7 +34,6 @@
       letter-spacing: 0.01em;
     }
 
-    /* subtle grain */
     body::before{
       content:"";
       position: fixed;
@@ -54,27 +52,26 @@
       align-items:flex-start;
       justify-content:center;
       padding: clamp(32px, 8vh, 90px) 18px;
-      opacity: 0;
-      animation: fadeIn 0.6s ease 0.2s forwards;
     }
-
-    @keyframes fadeIn{ to{ opacity: 1; } }
 
     .content{
       max-width: 880px;
       width: 100%;
+      /* reserve vertical space so typing doesn't push layout */
+      min-height: 420px;
     }
 
     .line{
       line-height: 1.65;
-      margin-bottom: 0.42em;
+      margin-bottom: 0.5em;
       font-size: clamp(18px, 1.9vw, 22px);
+      white-space: pre-wrap;
     }
 
     .line.title{
       font-size: clamp(26px, 2.6vw, 34px);
       line-height: 1.3;
-      margin-bottom: 0.65em;
+      margin-bottom: 0.7em;
     }
 
     .line.title .cad{
@@ -83,33 +80,40 @@
     }
 
     .line.dim{
-      color: rgba(238,231,219,.82);
+      color: rgba(238,231,219,.80);
       font-size: clamp(16px, 1.6vw, 19px);
     }
 
     .line.quote{
-      margin-top: clamp(22px, 3.2vh, 32px);
-      padding-top: 14px;
+      margin-top: clamp(18px, 2.8vh, 28px);
+      padding-top: 12px;
       border-top: 1px solid rgba(255,255,255,.05);
-      color: rgba(238,231,219,.72);
+      color: rgba(238,231,219,.70);
       font-size: clamp(15px, 1.5vw, 17px);
       line-height: 1.58;
     }
 
     .sig{
-      margin-top: 12px;
-      color: rgba(238,231,219,.58);
+      color: rgba(238,231,219,.56);
       font-size: clamp(14px, 1.3vw, 15px);
     }
+
+    .caret{
+      display:inline-block;
+      width: 11px;
+      opacity: .88;
+      animation: blink 1.05s steps(2,end) infinite;
+    }
+    @keyframes blink{ 50%{ opacity: 0; } }
 
     a{
       color: var(--fg);
       text-decoration: none;
-      border-bottom: 1px dotted rgba(238,231,219,.32);
+      border-bottom: 1px dotted rgba(238,231,219,.30);
       transition: border-color .2s, color .2s;
     }
     a:hover{
-      border-bottom-color: rgba(154,217,185,.80);
+      border-bottom-color: rgba(154,217,185,.78);
       color: rgba(238,231,219,.98);
     }
     a:focus-visible{
@@ -118,7 +122,6 @@
       border-radius: 6px;
     }
 
-    /* seedling: fixed bottom-right */
     .seedling{
       position: fixed;
       right: clamp(16px, 4vw, 36px);
@@ -126,78 +129,43 @@
       width: 88px;
       height: 88px;
       pointer-events: none;
-      opacity: 0;
-      animation: seedFade 0.5s ease 0.8s forwards;
-      filter: drop-shadow(0 0 12px rgba(123,211,167,.11));
+      opacity: .88;
+      filter: drop-shadow(0 0 12px rgba(123,211,167,.10));
     }
 
-    @keyframes seedFade{ to{ opacity: .90; } }
-
-    /* desktop: center vertically */
     @media (min-width: 900px){
-      .page{
-        align-items:center;
-      }
+      .page{ align-items:center; }
     }
 
-    /* mobile: force line breaks where needed */
-    @media (max-width: 520px){
-      .break-mobile{ display: block; }
-    }
-
-    /* reduced motion: instant, no fade */
     @media (prefers-reduced-motion: reduce){
       *{ animation: none !important; transition: none !important; }
-      .page{ opacity: 1; }
-      .seedling{ opacity: .90; }
     }
   </style>
 </head>
 <body>
   <div class="page">
-    <main class="content" role="main" aria-label="Phyturge Arboretum landing">
-      <div class="line title">
-        _hen<span>de</span><span class="cad">cad</span> — computer‑aided design, reimagined
-      </div>
-
-      <div class="line dim">
-        Phyturge Arboretum<span class="break-mobile"><br /></span>
-        phyIL over Python
-      </div>
-
-      <div class="line dim">
-        closed beta-testing<span class="break-mobile"><br /></span>
-        <a href="mailto:arsadamant@gmail.com?subject=hendecad%20closed%20beta%20%E2%80%94%20request%20seed&body=Hi%2C%0A%0AI%27d%20like%20to%20request%20a%20seed%20for%20hendecad%20closed%20beta.%0A%0AName%3A%0AUse%20case%3A%0ATech%20stack%3A%0AWhat%20I%20can%20test%3A%0A%0AThanks%2C">[request seed]</a>
-      </div>
-
-      <div class="line quote">
-        "One who is φυτουργός<br />
-        of all the works<br />
-        of all other workmen,<br />
-        of vessels of every kind,<br />
-        plants and animals,<br />
-        himself and all other things..."
-      </div>
-
-      <div class="sig">
-        Plato, Rep. <a href="https://www.gutenberg.org/files/1497/1497-h/1497-h.htm" target="_blank" rel="noreferrer">596c7–e3</a>
-      </div>
-    </main>
-
+    <main class="content" role="main" aria-label="Phyturge Arboretum landing" id="out"></main>
     <canvas class="seedling" id="seedling" width="88" height="88" aria-hidden="true"></canvas>
   </div>
 
   <script>
-    // Minimal canvas seedling (static mini-tree with subtle twitch)
     (function(){
-      const c = document.getElementById('seedling');
-      const ctx = c.getContext('2d');
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const out = document.getElementById('out');
+      const seed = document.getElementById('seedling');
+      const ctx = seed.getContext('2d');
+
+      const caret = document.createElement('span');
+      caret.className = 'caret';
+      caret.textContent = '▍';
+
+      // Canvas seedling: pixel art frames
       const px = 4;
       const C = {
         soil: 'rgba(238,231,219,.16)',
-        stem: 'rgba(154,217,185,.60)',
-        leaf: 'rgba(123,211,167,.68)',
-        leaf2:'rgba(191,227,201,.54)'
+        stem: 'rgba(154,217,185,.58)',
+        leaf: 'rgba(123,211,167,.66)',
+        leaf2:'rgba(191,227,201,.52)'
       };
 
       function dot(x,y,color){
@@ -206,28 +174,198 @@
         ctx.fillRect(x*px, y*px, px, px);
       }
 
-      function draw(twitch){
-        ctx.clearRect(0,0,88,88);
-        // soil
-        for(let x=3;x<=18;x++) dot(x,16,C.soil);
-        // trunk
-        dot(11,15,C.stem); dot(11,14,C.stem); dot(11,13,C.stem); dot(11,12,C.stem); dot(11,11,C.stem);
-        // canopy
-        [9,10,11,12,13].forEach(x => dot(x,10,C.leaf));
-        dot(10,9,C.leaf2); dot(11,9,C.leaf2); dot(12,9,C.leaf2);
-        dot(10,11,C.leaf2); dot(12,11,C.leaf2);
-        // twitch: extra pixels
-        if(twitch){ dot(9,9,C.leaf2); dot(13,9,C.leaf2); }
+      function clear(){ ctx.clearRect(0,0,88,88); }
+
+      const frames = [
+        () => { // sprout
+          clear();
+          for(let x=3;x<=18;x++) dot(x,16,C.soil);
+          dot(11,15,C.stem); dot(11,14,C.stem);
+          dot(10,14,C.leaf2); dot(12,14,C.leaf2);
+        },
+        () => { // plant
+          clear();
+          for(let x=3;x<=18;x++) dot(x,16,C.soil);
+          dot(11,15,C.stem); dot(11,14,C.stem); dot(11,13,C.stem); dot(11,12,C.stem);
+          dot(10,12,C.leaf); dot(12,12,C.leaf);
+          dot(9,11,C.leaf2); dot(13,11,C.leaf2);
+        },
+        (twitch) => { // tree
+          clear();
+          for(let x=3;x<=18;x++) dot(x,16,C.soil);
+          dot(11,15,C.stem); dot(11,14,C.stem); dot(11,13,C.stem); dot(11,12,C.stem); dot(11,11,C.stem);
+          [9,10,11,12,13].forEach(x => dot(x,10,C.leaf));
+          dot(10,9,C.leaf2); dot(11,9,C.leaf2); dot(12,9,C.leaf2);
+          dot(10,11,C.leaf2); dot(12,11,C.leaf2);
+          if(twitch){ dot(9,9,C.leaf2); dot(13,9,C.leaf2); }
+        }
+      ];
+
+      let seedPhase = 0;
+      function growSeed(){
+        if(seedPhase < frames.length - 1){
+          seedPhase++;
+          frames[seedPhase]();
+        }
       }
 
-      draw(false);
+      function twitchSeed(){
+        let t = false;
+        setInterval(() => {
+          t = !t;
+          frames[2](t);
+        }, 4200);
+      }
 
-      // subtle twitch every few seconds
-      let t = false;
-      setInterval(() => {
-        t = !t;
-        draw(t);
-      }, 4200);
+      // Lines to type (each is { text, class?, link?, isQuote?, isSig? })
+      const lines = [
+        { text: '_hen', append: 'de', cadPart: 'cad', class: 'title' }, // special: hendecad
+        { text: 'Phyturge Arboretum', class: 'dim' },
+        { text: 'phyIL over Python', class: 'dim' },
+        { text: 'closed beta-testing', class: 'dim' },
+        { text: '[request seed]', class: 'dim', link: 'mailto:arsadamant@gmail.com?subject=hendecad%20closed%20beta%20%E2%80%94%20request%20seed&body=Hi%2C%0A%0AI%27d%20like%20to%20request%20a%20seed%20for%20hendecad%20closed%20beta.%0A%0AName%3A%0AUse%20case%3A%0ATech%20stack%3A%0AWhat%20I%20can%20test%3A%0A%0AThanks%2C' },
+        { text: '"One who is φυτουργός\nof all the works\nof all other workmen,\nof vessels of every kind,\nplants and animals,\nhimself\nand all other things..."', class: 'quote' },
+        { text: 'Plato, Rep. ', sigLink: '596c7–e3', sigHref: 'https://www.gutenberg.org/files/1497/1497-h/1497-h.htm', class: 'sig' }
+      ];
+
+      let currentLine = 0;
+      let currentEl = null;
+
+      function mkLine(className){
+        const d = document.createElement('div');
+        d.className = 'line' + (className ? ' ' + className : '');
+        out.appendChild(d);
+        return d;
+      }
+
+      function moveCaretTo(el){
+        el.appendChild(caret);
+      }
+
+      function typeText(el, text, speed, onDone){
+        let i = 0;
+        const write = () => {
+          if(i < text.length){
+            el.insertBefore(document.createTextNode(text.charAt(i)), caret);
+            i++;
+            setTimeout(write, speed + Math.floor(Math.random()*12));
+          } else {
+            setTimeout(onDone, 360);
+          }
+        };
+        moveCaretTo(el);
+        setTimeout(write, 60);
+      }
+
+      function typeLine(idx){
+        if(idx >= lines.length){
+          // done: idle cursor on new empty line
+          const empty = mkLine('');
+          moveCaretTo(empty);
+          return;
+        }
+
+        const item = lines[idx];
+        currentEl = mkLine(item.class || '');
+
+        // Special: hendecad (line 0)
+        if(idx === 0){
+          const full = item.text + item.append + item.cadPart;
+          typeText(currentEl, full, 24, () => {
+            // swap to styled markup
+            currentEl.innerHTML = '<span>_hen</span><span>de</span><span class="cad">cad</span>';
+            moveCaretTo(currentEl);
+            growSeed(); // sprout appears
+            setTimeout(() => { currentLine++; typeLine(currentLine); }, 420);
+          });
+          return;
+        }
+
+        // Seedling growth triggers
+        if(idx === 2) setTimeout(growSeed, 200);       // plant
+        if(idx === 4) setTimeout(() => { growSeed(); twitchSeed(); }, 200); // tree + twitch
+
+        // Signature with link
+        if(item.sigLink){
+          typeText(currentEl, item.text, 20, () => {
+            const a = document.createElement('a');
+            a.href = item.sigHref;
+            a.target = '_blank';
+            a.rel = 'noreferrer';
+            a.textContent = '';
+            currentEl.appendChild(a);
+            moveCaretTo(a);
+
+            let j = 0;
+            const writeLink = () => {
+              if(j < item.sigLink.length){
+                a.insertBefore(document.createTextNode(item.sigLink.charAt(j)), caret);
+                j++;
+                setTimeout(writeLink, 22);
+              } else {
+                setTimeout(() => { currentLine++; typeLine(currentLine); }, 420);
+              }
+            };
+            setTimeout(writeLink, 60);
+          });
+          return;
+        }
+
+        // Link line
+        if(item.link){
+          const a = document.createElement('a');
+          a.href = item.link;
+          a.textContent = '';
+          currentEl.appendChild(a);
+          moveCaretTo(a);
+
+          let j = 0;
+          const writeLink = () => {
+            if(j < item.text.length){
+              a.insertBefore(document.createTextNode(item.text.charAt(j)), caret);
+              j++;
+              setTimeout(writeLink, 20);
+            } else {
+              setTimeout(() => { currentLine++; typeLine(currentLine); }, 360);
+            }
+          };
+          setTimeout(writeLink, 60);
+          return;
+        }
+
+        // Regular text
+        typeText(currentEl, item.text, 20, () => {
+          currentLine++;
+          typeLine(currentLine);
+        });
+      }
+
+      // Reduced motion: show instantly
+      if(reduceMotion){
+        lines.forEach((item, idx) => {
+          const el = mkLine(item.class || '');
+          if(idx === 0){
+            el.innerHTML = '<span>_hen</span><span>de</span><span class="cad">cad</span>';
+          } else if(item.link){
+            const a = document.createElement('a');
+            a.href = item.link;
+            a.textContent = item.text;
+            el.appendChild(a);
+          } else if(item.sigLink){
+            el.innerHTML = item.text + '<a href="' + item.sigHref + '" target="_blank" rel="noreferrer">' + item.sigLink + '</a>';
+          } else {
+            el.textContent = item.text;
+          }
+        });
+        const empty = mkLine('');
+        empty.appendChild(caret);
+        frames[2](false);
+        return;
+      }
+
+      // Start typing
+      frames[0]();
+      setTimeout(() => typeLine(0), 300);
     })();
   </script>
 </body>
