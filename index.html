@@ -44,6 +44,7 @@
         repeating-linear-gradient(0deg, rgba(255,255,255,.028) 0, rgba(255,255,255,.028) 1px, transparent 1px, transparent 4px),
         repeating-linear-gradient(90deg, rgba(0,0,0,.03) 0, rgba(0,0,0,.03) 1px, transparent 1px, transparent 5px);
       mix-blend-mode: overlay;
+      z-index: 1;
     }
 
     .page{
@@ -52,12 +53,13 @@
       align-items:flex-start;
       justify-content:center;
       padding: clamp(32px, 8vh, 90px) 18px;
+      position: relative;
+      z-index: 2;
     }
 
     .content{
       max-width: 880px;
       width: 100%;
-      /* reserve vertical space so typing doesn't push layout */
       min-height: 420px;
     }
 
@@ -134,7 +136,6 @@
     }
 
     /* provenance footer */
-
     .provenance-footer{
       position: fixed;
       left: 0;
@@ -142,6 +143,7 @@
       bottom: 0;
       padding: 0 24px 14px;
       pointer-events: none;
+      z-index: 3;
     }
 
     .provenance-inner{
@@ -180,7 +182,8 @@
       <small>
         This project was established in 2025 and has been under continuous private development.
         Cryptographic proof of existence and authorship has been established.
-        Proof hash: 8b1c20a3ad8730ea2aadf9440c3e57ac6581e49c2a4b0ebaf4b8700b59a8b070
+        Proof hash:
+        8b1c20a3ad8730ea2aadf9440c3e57ac6581e49c2a4b0ebaf4b8700b59a8b070
       </small>
     </div>
   </footer>
@@ -196,7 +199,6 @@
       caret.className = 'caret';
       caret.textContent = '▍';
 
-      // Canvas seedling: pixel art frames
       const px = 4;
       const C = {
         soil: 'rgba(238,231,219,.16)',
@@ -254,14 +256,14 @@
         }, 4200);
       }
 
-      // Lines to type
       const lines = [
         { text: '_hen', append: 'de', cadPart: 'cad', class: 'title' }, // special: hendecad
         { text: 'Phyturge Arboreum', class: 'dim' },
         { text: 'phyIL over Python', class: 'dim' },
         { text: 'closed beta-testing', class: 'dim' },
         { text: '[request seed]', class: 'dim', link: 'mailto:arsadamant@gmail.com?subject=hendecad%20closed%20beta%20%E2%80%94%20request%20seed&body=Hi%2C%0A%0AI%27d%20like%20to%20request%20a%20seed%20for%20hendecad%20closed%20beta.%0A%0AName%3A%0AUse%20case%3A%0ATech%20stack%3A%0AWhat%20I%20can%20test%3A%0A%0AThanks%2C' },
-        { text: '"One who is φυτουργός\nof all the works\nof all other workmen,\nof vessels of every kind,\nplants and animals,\nhimself\nand all other things..."', class: 'quote' },
+        { text: '[constitution preamble]', class: 'dim', link: 'constitution.html' },
+        { text: '"One who is φυτουργός\nof all the works\nof all other workmen,\nof vessels of every kind,\nplants and animals, himself \nand all other things..."', class: 'quote' },
         { text: 'Plato, Rep. ', sigLink: '596c7–e3', sigHref: 'https://www.gutenberg.org/files/1497/1497-h/1497-h.htm', class: 'sig' }
       ];
 
@@ -304,7 +306,7 @@
         const item = lines[idx];
         currentEl = mkLine(item.class || '');
 
-        // Special: hendecad (line 0) – now clickable
+        // Special: hendecad (line 0) – teraz klikalne
         if(idx === 0){
           const full = item.text + item.append + item.cadPart;
           typeText(currentEl, full, 24, () => {
