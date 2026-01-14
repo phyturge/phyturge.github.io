@@ -1,414 +1,244 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>HENDECAD · Phyturge Arboreum</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>phyturge — hendecad</title>
+  <meta name="description" content="HENDECAD — an operating system for long‑term cognitive and creative work by Phyturge Arboreum." />
   <style>
-    :root {
-      --paper: #f5f1e8;
-      --ink: #141414;
-      --muted: #5a5a5a;
-      --accent: #1e5b3c;
-      --grid: rgba(40,40,40,0.12);
+    :root{
+      --bg0:#07090c;
+      --bg1:#05070a;
+      --fg:#eee7db;
+      --muted:#b8b0a3;
+      --cad:#7bd3a7;
+      --focus:#9ad9b9;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *{ margin:0; padding:0; box-sizing:border-box; }
 
-    html, body { height: 100%; }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-                   "Segoe UI", sans-serif;
-      background-color: var(--paper);
-      color: var(--ink);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
+    html, body{
+      min-height: 100%;
+      background: var(--bg1);
     }
 
-    a { color: inherit; text-decoration: none; }
-
-    main { min-height: 100vh; display: flex; flex-direction: column; }
-
-    .page {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 2.5rem 1.5rem 4rem;
-    }
-
-    /* header (same layout as index) */
-
-    .site-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 3rem;
-      position: relative;
-      z-index: 3;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.95rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .brand-mark {
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      overflow: hidden;
-      background: rgba(0,0,0,0.04);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand-mark img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      opacity: 0.9;
-    }
-
-    .nav {
-      display: flex;
-      gap: 1.5rem;
-      font-size: 0.9rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .nav a {
-      position: relative;
-      padding-bottom: 0.15rem;
-    }
-
-    .nav a::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 0;
-      height: 1px;
-      background: var(--accent);
-      transition: width 150ms ease-out;
-    }
-
-    .nav a:hover::after {
-      width: 100%;
-    }
-
-    /* hero */
-
-    .hero-shell {
-      position: relative;
-      border-radius: 18px;
-      overflow: hidden;
-      background-color: #e8e3d7;
-      box-shadow:
-        0 18px 45px rgba(0,0,0,0.16),
-        0 0 0 1px rgba(0,0,0,0.04);
-      isolation: isolate;
-      margin-bottom: 3.5rem;
-    }
-
-    .hero-shell::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(to right, var(--grid) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
-      background-size: 40px 40px;
-      opacity: 0.6;
-      mix-blend-mode: multiply;
-      pointer-events: none;
-    }
-
-    .hero-shell::after {
-      content: "";
-      position: absolute;
-      inset: 0;
+    body{
+      color: var(--fg);
       background:
-        radial-gradient(circle at 70% 15%, rgba(255,255,255,0.9), transparent 55%),
-        radial-gradient(circle at 12% 80%, rgba(18,92,57,0.26), transparent 60%);
-      mix-blend-mode: soft-light;
-      pointer-events: none;
+        radial-gradient(900px 650px at 22% 18%, rgba(120,140,160,.09), transparent 68%),
+        radial-gradient(760px 560px at 72% 78%, rgba(60,140,110,.07), transparent 62%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      background-attachment: fixed;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      letter-spacing: 0.01em;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-bottom: 80px;
     }
 
-    .hero-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr);
-      min-height: 420px;
-      position: relative;
+    body::before{
+      content:"";
+      position: fixed;
+      inset:0;
+      pointer-events:none;
+      opacity: .06;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(255,255,255,.028) 0, rgba(255,255,255,.028) 1px, transparent 1px, transparent 4px),
+        repeating-linear-gradient(90deg, rgba(0,0,0,.03) 0, rgba(0,0,0,.03) 1px, transparent 1px, transparent 5px);
+      mix-blend-mode: overlay;
       z-index: 1;
     }
 
-    @media (max-width: 880px) {
-      .hero-layout { grid-template-columns: minmax(0,1fr); }
-    }
-
-    .hero-copy {
-      padding: 3.25rem 3rem;
+    .wrap{
       display: flex;
-      flex-direction: column;
       justify-content: center;
-      gap: 1.6rem;
-    }
-
-    @media (max-width: 880px) {
-      .hero-copy { padding: 2.5rem 1.75rem 2.25rem; }
-    }
-
-    .eyebrow {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.22em;
-      color: var(--muted);
-    }
-
-    .hero-title {
-      font-size: clamp(2.35rem, 3.1vw + 1rem, 3.2rem);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      line-height: 1.14;
-    }
-
-    .hero-dual {
-      display: grid;
-      gap: 0.35rem;
-      font-size: 0.98rem;
-      max-width: 32rem;
-      color: #353129;
-    }
-
-    .hero-dual span:nth-child(1) {
-      opacity: 0.9;
-    }
-
-    .hero-dual span:nth-child(2) {
-      opacity: 0.8;
-      font-size: 0.94rem;
-    }
-
-    .hero-aside {
+      padding: clamp(40px, 8vh, 100px) 24px;
       position: relative;
-      overflow: hidden;
-      background:
-        linear-gradient(to right, rgba(245,241,232,0.3), transparent 30%),
-        url("arboreum12.jpg") center/cover no-repeat;
+      z-index: 2;
     }
 
-    .hero-aside::before {
-      content: "";
-      position: absolute;
-      inset: 14% 10%;
-      border-radius: 1200px;
-      border: 1px solid rgba(20,20,20,0.28);
-      mix-blend-mode: soft-light;
+    .doc{
+      max-width: 780px;
+      width: 100%;
     }
 
-    .hero-aside-inner {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: flex-end;
-      justify-content: flex-end;
-      padding: 1.6rem 1.8rem;
+    /* Header / hero */
+
+    .header{
+      margin-bottom: clamp(32px, 5vh, 48px);
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(238,231,219,.08);
     }
 
-    .hero-aside-card {
-      background: rgba(245,241,232,0.85);
-      padding: 0.95rem 1.2rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
+    .kicker{
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .title-row{
+      font-size: clamp(26px, 2.4vw, 32px);
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+
+    .title-row .cad{
+      color: var(--cad);
+      text-shadow: 0 0 20px rgba(123,211,167,.14);
+    }
+
+    .sub-row{
+      font-size: clamp(17px, 1.8vw, 21px);
+      color: rgba(238,231,219,.9);
+      margin-bottom: 4px;
+    }
+
+    .sub-row-alt{
+      font-size: 14px;
+      color: rgba(238,231,219,.75);
+    }
+
+    /* Sections */
+
+    .section{
+      margin-top: 32px;
+    }
+
+    .section-label{
+      font-size: 13px;
+      color: var(--cad);
       letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: #333026;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 8px 22px rgba(0,0,0,0.23);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.65rem;
+      margin-bottom: 6px;
+      opacity: .9;
     }
 
-    .hero-aside-card-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 12px rgba(30,91,60,0.8);
-    }
-
-    /* content sections */
-
-    .section {
-      margin-bottom: 3.25rem;
-    }
-
-    .section-label {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.22em;
-      color: var(--muted);
-      margin-bottom: 0.85rem;
-    }
-
-    .section-title {
-      font-size: 1.25rem;
+    .section-title{
+      font-size: 16px;
+      color: rgba(238,231,219,.9);
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      margin-bottom: 0.7rem;
+      margin-bottom: 10px;
     }
 
-    .section-body {
-      font-size: 0.96rem;
-      max-width: 40rem;
-      color: #322c23;
+    .section-body{
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(238,231,219,.82);
     }
 
-    .section-body p + p {
-      margin-top: 0.75rem;
+    .section-body p + p{
+      margin-top: 10px;
     }
 
-    .two-column {
+    .two-col{
       display: grid;
-      grid-template-columns: minmax(0,1.4fr) minmax(0,1.1fr);
-      gap: 2.2rem;
+      grid-template-columns: minmax(0,1.5fr) minmax(0,1.1fr);
+      gap: 26px;
     }
 
-    @media (max-width: 880px) {
-      .two-column { grid-template-columns: minmax(0,1fr); }
+    @media (max-width: 820px){
+      .two-col{
+        grid-template-columns: minmax(0,1fr);
+      }
     }
 
-    .callout {
-      padding: 1.5rem 1.7rem;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,0.12);
-      background: linear-gradient(to bottom right, rgba(255,255,255,0.96), rgba(240,234,224,0.96));
-      font-size: 0.9rem;
-      color: #373126;
+    .callout{
+      border: 1px solid rgba(238,231,219,.12);
+      border-radius: 12px;
+      padding: 14px 16px 16px;
+      background: radial-gradient(circle at 0 0, rgba(123,211,167,.06), transparent 55%);
+      font-size: 14px;
+      color: rgba(238,231,219,.8);
     }
 
-    .callout-title {
-      font-size: 0.82rem;
+    .callout-label{
+      font-size: 12px;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      letter-spacing: 0.2em;
       color: var(--muted);
-      margin-bottom: 0.6rem;
+      margin-bottom: 6px;
     }
 
-    .pill {
-      display: inline-flex;
-      padding: 0.18rem 0.7rem;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.3);
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      letter-spacing: 0.22em;
-      color: var(--muted);
-      background: rgba(244,238,228,0.9);
-      margin-bottom: 0.5rem;
-    }
+    /* Footer / back link */
 
-    /* footer */
-
-    .footer-row {
+    .footer{
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(238,231,219,.08);
+      font-size: 13px;
+      color: rgba(238,231,219,.55);
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-top: 1.5rem;
-      font-size: 0.78rem;
-      color: var(--muted);
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    @media (max-width: 720px) {
-      .footer-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
-      }
+    .nav-back{
+      margin-top: 32px;
+      display: inline-block;
+      font-size: 14px;
+    }
+
+    a{
+      color: var(--fg);
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(238,231,219,.30);
+      transition: border-color .2s, color .2s;
+    }
+
+    a:hover{
+      border-bottom-color: rgba(154,217,185,.78);
+      color: rgba(238,231,219,.98);
+    }
+
+    a:focus-visible{
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ animation: none !important; transition: none !important; }
     }
   </style>
 </head>
-
 <body>
-  <main>
-    <div class="page">
-      <header class="site-header">
-        <div class="brand">
-          <div class="brand-mark">
-            <img src="phi20.jpg" alt="Phyturge Arboreum">
-          </div>
-          <span>Phyturge Arboreum</span>
-        </div>
+  <div class="wrap">
+    <article class="doc">
 
-        <nav class="nav">
-          <a href="index.html">_arboreum</a>
-          <a href="hendecad.html">_hendecad</a>
-          <a href="#newsletter">_archive</a>
-        </nav>
+      <header class="header">
+        <div class="kicker">phyturge · hendecad</div>
+        <div class="title-row">
+          We design digital constitutions for creative and cognitive work.
+        </div>
+        <div class="sub-row">
+          Phyturge builds operating systems that bridge human thought and machine language – transparent, sovereign, self‑evolving.
+        </div>
+        <div class="sub-row-alt">
+          HENDECAD is the first such system: an operating system for long‑term cognitive and creative work.
+        </div>
       </header>
 
-      <section class="hero-shell">
-        <div class="hero-layout">
-          <div class="hero-copy">
-            <div class="eyebrow">HENDECAD System</div>
-            <h1 class="hero-title">Digital constitutions for work</h1>
-
-            <div class="hero-dual">
-              <span>We design digital constitutions for creative and cognitive work.</span>
-              <span>Phyturge builds operating systems that bridge human thought and machine language – transparent, sovereign, self‑evolving.</span>
-            </div>
-          </div>
-
-          <aside class="hero-aside">
-            <div class="hero-aside-inner">
-              <div class="hero-aside-card">
-                <span class="hero-aside-card-dot"></span>
-                <span>Local‑first orchestration · 11 agents · phyIL</span>
-              </div>
-            </div>
-          </aside>
-        </div>
-      </section>
-
       <section class="section">
-        <div class="two-column">
-          <div>
-            <div class="section-label">About Phyturge</div>
-            <h2 class="section-title">Operating systems as constitutions</h2>
-            <div class="section-body">
-              <p>
-                Phyturge is the developer brand for projects that treat operating systems as digital constitutions – with a charter, entity hierarchies, execution contracts, and genealogies.
-              </p>
-              <p>
-                Every Phyturge product is rooted in classical ideas of order and form, yet fully digital, AI‑powered, and designed as a lab of ideas at the intersection of culture, philosophy, and technology.
-              </p>
-            </div>
-          </div>
-
-          <aside class="callout">
-            <div class="callout-title">Solo developer practice</div>
-            <p>
-              Phyturge is designed by a solo developer – everything from constitution to code, from philosophy to deployment. This ensures coherence of vision, intellectual honesty, and full genealogy for every entity in the system.
-            </p>
-          </aside>
+        <div class="section-label">About Phyturge</div>
+        <div class="section-title">Operating systems as digital constitutions</div>
+        <div class="section-body">
+          <p>
+            Phyturge is the developer brand for projects that treat operating systems as digital constitutions – with a charter, entity hierarchies, execution contracts, and genealogies.
+          </p>
+          <p>
+            Every Phyturge product is rooted in classical ideas of order and form, yet fully digital, AI‑powered, and designed as a lab of ideas at the intersection of culture, philosophy, and technology.
+          </p>
         </div>
       </section>
 
       <section class="section">
         <div class="section-label">The system</div>
-        <h2 class="section-title">HENDECAD operating system</h2>
-        <div class="two-column">
+        <div class="section-title">HENDECAD operating system</div>
+        <div class="two-col">
           <div class="section-body">
             <p>
               HENDECAD is an operating system for long‑term cognitive and creative work. It is built on 11 agents, an intermediate language (phyIL), and Constitution 4.x, which defines boundaries, contracts, and change admission procedures.
@@ -417,31 +247,48 @@
               The system operates local‑first – your primary data remains yours, and all internal layers (indexes, profiles, workflows) are reconstructible and auditable.
             </p>
           </div>
-
-          <div class="callout">
-            <span class="pill">Constitution 4.x</span>
+          <aside class="callout">
+            <div class="callout-label">Constitution 4.x</div>
             <p>
-              The HENDECAD Constitution establishes roles for agents, governs how workflows are composed, and sets out the traceability requirements for every decision the system makes.
+              The constitution defines roles for agents, governs how workflows are composed, and sets the traceability requirements for every decision the system makes. It turns orchestration into a governed, inspectable process rather than a black box.
             </p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="two-col">
+          <div>
+            <div class="section-label">Practice</div>
+            <div class="section-title">Solo‑developed, end to end</div>
+            <div class="section-body">
+              <p>
+                Phyturge is designed by a solo developer – everything from constitution to code, from philosophy to deployment. This ensures coherence of vision, intellectual honesty, and full genealogy for every entity in the system.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Newsletter · Blog</div>
+            <div class="section-title">Archive of ideas (soon)</div>
+            <div class="section-body">
+              <p>
+                Coming soon: archive of ideas, experiment logs, constitution descriptions, and analyses at the intersection of culture and technology.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="section" id="newsletter">
-        <div class="section-label">Newsletter · Blog</div>
-        <h2 class="section-title">Archive of ideas (soon)</h2>
-        <div class="section-body">
-          <p>
-            Coming soon: archive of ideas, experiment logs, constitution descriptions, and analyses at the intersection of culture and technology.
-          </p>
-        </div>
-      </section>
-
-      <footer class="footer-row">
-        <span>HENDECAD · Phyturge Arboreum.</span>
-        <span>Local‑first orchestration for long‑horizon work.</span>
+      <footer class="footer">
+        <span>HENDECAD · local‑first orchestration for long‑horizon work.</span>
+        <span>Phyturge Arboreum — developer of digital constitutions.</span>
       </footer>
-    </div>
-  </main>
+
+      <div class="nav-back">
+        <a href="index.html">[ return to main ]</a>
+      </div>
+
+    </article>
+  </div>
 </body>
 </html>
